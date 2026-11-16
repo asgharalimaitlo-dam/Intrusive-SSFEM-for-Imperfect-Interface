@@ -1,7 +1,6 @@
 # =============================================================================
 # MASTER SIMULATION ENGINE: main_ssfem_interface.py
-# TITLE: Stochastic Formulation and Intrusive Galerkin Solution of Asymmetric 
-#        Imperfect Interfaces using Displacement Jump Operators
+# TITLE: Asymptotic and Spectral Stochastic Finite Element Modeling of Imperfect Interfaces via Uzawa Augmented Lagrangian
 # AUTHORS: Asghar Maitlo, Frédéric Lebon, and Caroline Bauzet
 # =============================================================================
 
