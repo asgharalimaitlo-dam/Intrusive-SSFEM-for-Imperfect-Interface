@@ -6,7 +6,7 @@
 
 Parallel `FEniCSx` / `PETSc` implementation of a **non-linear Spectral Stochastic Finite Element Method (SSFEM)** coupled with an **Uzawa Augmented Lagrangian contact solver** for zero-thickness imperfect interfaces derived via vanishing-thickness asymptotic expansion ($\varepsilon \to 0$).
 
-The framework resolves mixed-mode cohesive degradation, unilateral Signorini contact ($\lbrack\!\lbrack u_3 \rbrack\!\rbrack \ge 0$), and thermodynamically irreversible ($\dot{d} \le 0$) multiplicative Itô stochastic damage evolution in a single coupled pass using orthonormalized Hermite Generalized Polynomial Chaos (gPC) bases. Every simulation module is cleanly separated into a parallel MPI solver script and a standalone post-processing script (`plot_*.py`).
+The framework resolves mixed-mode cohesive degradation, unilateral Signorini contact ($\lbrack\!\lbrack u_3 \rbrack\!\rbrack \geq 0$), and thermodynamically irreversible ($\dot{d} \le 0$) multiplicative Itô stochastic damage evolution in a single coupled pass using orthonormalized Hermite Generalized Polynomial Chaos (gPC) bases. Every simulation module is cleanly separated into a parallel MPI solver script and a standalone post-processing script (`plot_*.py`).
 
 ---
 
