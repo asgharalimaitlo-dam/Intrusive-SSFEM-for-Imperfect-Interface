@@ -106,7 +106,7 @@ If you use this codebase in your research, please cite the accompanying manuscri
 ```bibtex
 @article{Asghar_SSFEM_Uzawa_2026,
   title   = {Asymptotic and Spectral Stochastic Finite Element Modeling of Imperfect Interfaces via Uzawa Augmented Lagrangian},
-  author  = {Asghar Ali Maitlo, Frédéric Lebon and Caroline Bauzet},
+  authors  = {Asghar Ali Maitlo, Frédéric Lebon and Caroline Bauzet},
   journal = {Submitted},
   year    = {2026}
 }
