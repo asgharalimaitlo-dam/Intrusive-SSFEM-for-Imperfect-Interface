@@ -1,115 +1,113 @@
-# An Intrusive Parallel SSFEM Framework for Asymmetric Imperfect Interfaces
+# Asymptotic and Spectral Stochastic Finite Element Modeling of Imperfect Interfaces via Uzawa Augmented Lagrangian
 
-This repository hosts the official open-source parallel computing pipeline and finite element solver developed for the manuscript: **"Stochastic Formulation and Intrusive Galerkin Solution of Asymmetric Imperfect Interfaces using Displacement Jump Operators."**
+[![FEniCSx](https://shields.io)](https://fenicsproject.org)
+[![PETSc / MUMPS](https://shields.io)](https://petsc.org)
+[![MPI Parallel](https://shields.io)](https://readthedocs.io)
 
-The software framework is engineered in Python utilizing the **DOLFINx (FEniCSx)** computing platform paired with the **PETSc** linear algebra backend to solve non-linear multi-axis fatigue degradation paths across zero-thickness manifolds.
+Parallel `FEniCSx` / `PETSc` implementation of a **non-linear Spectral Stochastic Finite Element Method (SSFEM)** coupled with an **Uzawa Augmented Lagrangian contact solver** for zero-thickness imperfect interfaces derived via vanishing-thickness asymptotic expansion ($\varepsilon \to 0$).
 
-## 🔬 Core Numerical Innovations
-* **Intrusive Spectral Projections:** Eliminates traditional sampling loops by mapping random state-dependent structures onto a deterministic third-order algebraic chaos coupling tensor \(C_{ijk}\).
-* **Asymmetric Unilateral Constraints:** Enforces strict Signorini non-penetration compliance (\(\lbrack\!\lbrack u_3 \rbrack\!\rbrack \ge 0\)) under cyclic loading via a high-magnitude linear contact penalty (\(\kappa_{\text{penalty}} = 10^6\) MPa/mm).
-* **Multiplicative Itô Fatigue Dynamics:** Couples random microscale material faults with structural health using state-dependent noise integrals that satisfy thermodynamic irreversibility bounds (\(\dot{d} \le 0\)).
-
-## 💻 Audited Workstation Execution Environment
-All computational benchmarks and performance timelines were audited and recorded using the following localized workstation node architecture:
-* **Hardware System:** HP ZBook G9 Mobile Workstation
-* **Processor:** 12th Gen Intel(R) Core(TM) i7-12800H H-Series (14 Cores, 20 Threads, 2.40 GHz base)
-* **Memory:** 16.0 GB dual-channel DDR5 RAM (15.6 GB addressable by Linux kernel)
-* **Graphics:** NVIDIA RTX Workstation Laptop GPU (4 GB GDDR6 dedicated)
-* **OS Environment:** Ubuntu Linux 22.04 LTS (x64 Subsystem)
+The framework resolves mixed-mode cohesive degradation, unilateral Signorini contact ($\lbrack\!\lbrack u_3 \rbrack\!\rbrack \ge 0$), and thermodynamically irreversible ($\dot{d} \le 0$) multiplicative Itô stochastic damage evolution in a single coupled pass using orthonormalized Hermite Generalized Polynomial Chaos (gPC) bases. Every simulation module is cleanly separated into a parallel MPI solver script and a standalone post-processing script (`plot_*.py`).
 
 ---
 
-## 📂 Repository Architecture & Core Code Components
+## Key Highlights & Verified Benchmarks
 
-The codebase is organized into a modular pipeline separating the parallel execution engines, computational error parsing operations, and automated publication-grade plotting utilities:
-
-```text
-intrusive-sfem-interface/
-├── LICENSE                                 # Official MIT License file
-├── README.md                               # Operational execution and build guide
-├── requirements.txt                        # Python environment dependencies
-│
-├── src/                                    # CORE EXECUTION ENGINES
-│   ├── ssfem_interface.py                  # Parallel FEniCSx simulation engine
-│   ├── error_analysis.py                   # Multi-mesh h-refinement text parser
-│   └── shear_jump.py                       # Transverse field extraction routine
-│
-└── post_process/                           # MANUSCRIPT PLOTTING PIPELINES
-    ├── plot_interface_deformed_mesh.py     # Renders the warped element grid contours
-    ├── plot_intrusive_non_intrusive_conv.py # Compares SSFEM modal curves vs. MCS reference
-    ├── plot_interface_kinematics.py        # Maps dual-axis kinematic contact curves
-    ├── plot_interface_damage_evolution.py  # Tracks history-dependent staircase fatigue steps
-    ├── plot_shear_profile.py               # Plots uniform transverse horizontal responses
-    ├── plot_stress_profile.py              # Visualizes the central cohesive softening stress troughs
-    └── plot_error_analysis.py              # Generates the log-log h-convergence slope profiles
-```
+* **Asymptotic–Stochastic Formulation:** Couples a zero-thickness cohesive–contact law ($\varepsilon \to 0$) with multiplicative stochastic damage evolution via pre-computed third-order Galerkin contraction tensors $C_{ijk} = \mathbb{E}[\hat{\Psi}_i \hat{\Psi}_j \hat{\Psi}_k]$.
+* **Optimal Numerical Convergence:** Achieves quadratic spatial convergence ($\mathcal{O}(h^2)$, slope $2.14$) and first-order temporal accuracy ($\mathcal{O}(\Delta t)$, slopes $1.09\text{--}1.11$).
+* **$305.6\times$ Monte Carlo Speedup:** Completes a $400$-step cyclic simulation in **$9.88\text{ s}$** on $4$ MPI ranks versus **$3{,}019.84\text{ s}$** ($50.33\text{ min}$) for a $500$-sample non-intrusive Monte Carlo ensemble ($6.541\%$ relative $L^2$ discrepancy at $p=1$).
+* **Stochastic $p$-Refinement ($p \in \{1, 2, 3, 4\}$):** Demonstrates systematic spectral error decay across higher-order moments, reducing third-central skewness error from $100.00\%$ ($p=1$) to $30.47\%$ ($p=4$).
 
 ---
 
-## 🚀 Getting Started & Execution Instructions
+## Repository Structure
 
-### 1. Environment Deployment via Docker (Recommended)
-To eliminate local operating system dependency conflicts and secure the exact complex-valued PETSc bindings required by the backend assembler, pull and launch the official DOLFINx container container:
+| # | Solver Script | Post-Processing Script | Description |
+| :- | :--- | :--- | :--- |
+| **1** | `main_ssfem_interface.py` | `plot_main_ssfem_interface.py` | Transient cyclic debonding, $\pm 3\sigma$ bounds, shear jump, Signorini contact & hysteresis |
+| **2** | `degraded_meshes.py` | `plot_degraded_meshes.py` | Full-field spatial damage localization and magnified interfacial distortion |
+| **3** | `ssfem_two_scenarios.py` | `plot_ssfem_two_scenarios.py` | Parametric comparison of intrinsic stochasticity vs. fluctuating boundary tractions |
+| **4** | `special_error_analysis.py` | `plot_special_error_analysis.py` | Spatial $h$-refinement verification across nested triangulations ($\mathcal{O}(h^2)$) |
+| **5** | `temporal_error_analysis.py` | `plot_temporal_error_analysis.py` | Backward Euler–Maruyama temporal step-size convergence ($\mathcal{O}(\Delta t)$) |
+| **6** | `ssfem_mcs_validation.py` | `plot_ssfem_mcs_validation.py` | $500$-sample Monte Carlo wall-clock speedup ($305.6\times$) & trajectory benchmark |
+| **7** | `p_refinement.py` | `plot_p_refinement.py` | Spectral $p$-refinement across Hermite orders $p \in \{1, 2, 3, 4\}$ ($2\text{--}5$ modes) |
+
+---
+
+## Installation & Dependencies
+
+This codebase requires **DOLFINx (`v0.8+`)** compiled with **PETSc** and **MUMPS** direct sparse LU solver support:
+
 ```bash
-docker pull dolfinx/dolfinx:complex
-docker run -it -v \$(pwd):/home/shared -w /home/shared dolfinx/dolfinx:complex
-```
-
-### 2. Running the Core Simulation Engine
-To execute the 400-step high-resolution cyclic parametric sweep using distributed memory ranks across 4 active CPU thread streams, run via MPI:
-```bash
-mpirun -n 4 python3 src/ssfem_interface.py
-```
-*Note: This command solves the unified block-algebraic matrix equations concurrently in **~13.8 seconds***
-
-### 3. Executing Spatial Error Parsers and Data Post-Processing
-To compile the raw empirical data matrices for multi-mesh convergence tracking and sanitize complex-valued notation keys (`+0j`), run the background utility files:
-```bash
-# Run multi-mesh h-refinement sweeps to compile error matrices
-python3 src/error_analysis.py
-
-# Extract transverse shear jump vectors across the central cross-section
-python3 src/shear_jump.py
-```
-
-### 4. Re-rendering Manuscript Figure Graphics
-Once the text datasets are compiled, re-render the high-resolution vector graphics artifacts by running the localized plotting utilities:
-```bash
-# Render warped grids and total displacement magnitude contours
-python3 post_process/plot_interface_deformed_mesh.py
-
-# Plot spectral SSFEM convergence trajectories vs. MCS sample marks
-python3 post_process/plot_intrusive_non_intrusive_convergence.py
-
-# Map shear sliding waves against the Signorini contact floor
-python3 post_process/plot_interface_kinematics.py
-
-# Track threshold-dependent staircase damage plateaus
-python3 post_process/plot_interface_damage_evolution.py
-
-# Plot horizontal shear responses along the transverse width
-python3 post_process/plot_shear_profile.py
-
-# Visualize the stress relaxation damage localization troughs
-python3 post_process/plot_stress_profile.py
-
-# Generate log-log spatial error maps validating O(h²) slopes
-python3 post_process/plot_error_analysis.py
+conda create -n fenicsx-ssfem -c conda-forge fenics-dolfinx petsc4py mpi4py numpy scipy matplotlib
+conda activate fenicsx-ssfem
 ```
 
 ---
 
-## 📜 Academic Attribution & Citation
-If you utilize this framework, its node-pair displacement discontinuity jump operators, or its intrusive stochastic temporal integration loop in your research, please provide formal attribution to our journal publication:
+## Reproducing All Manuscript Results
+
+Clone the repository and execute each solver + post-processing pair from the project root directory:
+
+```bash
+git clone <your-repository-url>
+cd <your-repository-folder>
+```
+
+### 1. Transient Cyclic Debonding & Signorini Contact
+```bash
+mpirun -n 4 python3 main_ssfem_interface.py
+python3 plot_main_ssfem_interface.py
+```
+
+### 2. Full-Field Spatial Degradation & Mesh Distortion
+```bash
+mpirun -n 4 python3 degraded_meshes.py
+python3 plot_degraded_meshes.py
+```
+
+### 3. Stochastic Boundary Excitation Sensitivity
+```bash
+mpirun -n 4 python3 ssfem_two_scenarios.py
+python3 plot_ssfem_two_scenarios.py
+```
+
+### 4. Spatial & Temporal Convergence Studies
+```bash
+# Spatial h-refinement study
+mpirun -n 4 python3 special_error_analysis.py
+python3 plot_special_error_analysis.py
+
+# Temporal dt-refinement study
+mpirun -n 4 python3 temporal_error_analysis.py
+python3 plot_temporal_error_analysis.py
+```
+
+### 5. 500-Sample Monte Carlo Benchmark
+* Set `TEST_MODE = True` at line 15 of `ssfem_mcs_validation.py` for a **~15-second** $20$-sample verification run.
+* Set `TEST_MODE = False` for the full **$500$-sample $\times$ $400$-step** manuscript benchmark (~50 minutes):
+```bash
+mpirun -n 4 python3 ssfem_mcs_validation.py
+python3 plot_ssfem_mcs_validation.py
+```
+
+### 6. Stochastic $p$-Refinement Study
+Evaluates orthonormalized Hermite expansions for $p \in \{1, 2, 3, 4\}$ against a $25$-point Gauss–Hermite quadrature reference (~35 seconds):
+```bash
+python3 p_refinement.py
+python3 plot_p_refinement.py
+```
+
+---
+
+## Citation
+
+If you use this codebase in your research, please cite the accompanying manuscript:
 
 ```bibtex
-@article{asghar2026stochastic,
-  author    = { Maitlo Asghar, Bauzet Caroline and Lebon Fr{\'e}deric},
-  title     = {Stochastic Formulation and Intrusive Galerkin Solution of Asymmetric Imperfect Interfaces using Displacement Jump Operators},
-  journal   = {yet to decide},
-  volume    = {Accepted / In Press},
-  year      = {2026},
-  publisher = {},
-  doi       = {}
+@article{Asghar_SSFEM_Uzawa_2026,
+  title   = {Asymptotic and Spectral Stochastic Finite Element Modeling of Imperfect Interfaces via Uzawa Augmented Lagrangian},
+  author  = {Asghar Ali Maitlo, Frédéric Lebon and Caroline Bauzet},
+  journal = {Submitted},
+  year    = {2026}
 }
 ```
