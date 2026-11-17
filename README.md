@@ -87,7 +87,7 @@ python3 plot_temporal_error_analysis.py
 * Set `TEST_MODE = False` for the full **$500$-sample $\times$ $400$-step** manuscript benchmark (~50 minutes):
 ```bash
 mpirun -n 4 python3 ssfem_mcs_validation.py
-python3 plot_ssfem_mcs_validation.py
+python3 plot_ssfem_mcs.py
 ```
 
 ### 6. Stochastic $p$-Refinement Study
