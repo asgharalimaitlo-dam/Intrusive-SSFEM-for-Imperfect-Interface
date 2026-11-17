@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-csv_path = os.path.join(script_dir, "fem_simulation_data1.csv")
+csv_path = os.path.join(script_dir, "fem_simulation_data.csv")
 
 data = np.loadtxt(csv_path, delimiter=",", skiprows=1)
 time     = data[:, 0]
