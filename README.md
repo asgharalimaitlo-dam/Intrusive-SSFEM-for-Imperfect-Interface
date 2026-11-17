@@ -28,7 +28,7 @@ The framework resolves mixed-mode cohesive degradation, unilateral Signorini con
 | **3** | `ssfem_two_scenarios.py` | `plot_ssfem_two_scenarios.py` | Parametric comparison of intrinsic stochasticity vs. fluctuating boundary tractions |
 | **4** | `special_error_analysis.py` | `plot_special_error_analysis.py` | Spatial $h$-refinement verification across nested triangulations ($\mathcal{O}(h^2)$) |
 | **5** | `temporal_error_analysis.py` | `plot_temporal_error_analysis.py` | Backward Euler–Maruyama temporal step-size convergence ($\mathcal{O}(\Delta t)$) |
-| **6** | `ssfem_mcs_validation.py` | `plot_ssfem_mcs_validation.py` | $500$-sample Monte Carlo wall-clock speedup ($305.6\times$) & trajectory benchmark |
+| **6** | `ssfem_mcs_validation.py` | `plot_ssfem_mcs.py` | $500$-sample Monte Carlo wall-clock speedup ($305.6\times$) & trajectory benchmark |
 | **7** | `p_refinement.py` | `plot_p_refinement.py` | Spectral $p$-refinement across Hermite orders $p \in \{1, 2, 3, 4\}$ ($2\text{--}5$ modes) |
 
 ---
