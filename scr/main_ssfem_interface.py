@@ -262,7 +262,6 @@ for step in range(1, total_steps + 1):
         p_mult.x.scatter_forward()
     
     # Assemble and solve implicit backward Euler-Maruyama damage step
-       # Line 266: Use zeroEntries() for a PETSc Mat object (b_vector.set(0.0) stays the same)
     A_matrix.zeroEntries()
     fem.petsc.assemble_matrix(A_matrix, a_chi)
     A_matrix.assemble()
